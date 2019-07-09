@@ -1,0 +1,128 @@
+use vivek
+select * from student
+select * from cars
+select * from owners
+
+/* subqueery*/
+select * from STUDENT where MATHS >
+(
+	select MATHS from STUDENT where ROLL=39
+);
+
+/* Details of those students from standard 3C who have scored more in maths than ALL student of standard 3b*/
+select * from student
+where STANDARD=3 AND DIVISION='C'
+AND MATHS >
+(
+	SELECT MAX(MATHS) FROM STUDENT
+    WHERE STANDARD=3 AND DIVISION='B'
+)
+
+select * from student
+where STANDARD=3 AND DIVISION='C'
+AND MATHS > ALL
+(
+	SELECT MATHS FROM STUDENT
+    WHERE STANDARD=3 AND DIVISION='B'
+)
+
+
+
+/* Details of those students from standard 3C who have scored more in maths than ANY student of standard 3b*/
+select * from student
+where STANDARD=3 AND DIVISION='C'
+AND MATHS >
+(
+	SELECT MIN(MATHS) FROM STUDENT
+    WHERE STANDARD=3 AND DIVISION='B'
+)
+
+select * from student
+where STANDARD=3 AND DIVISION='C'
+AND MATHS > ANY
+(
+	SELECT MATHS FROM STUDENT
+    WHERE STANDARD=3 AND DIVISION='B'
+)
+
+
+/*USE DISTINCT*/
+
+SELECT STANDARD FROM STUDENT
+SELECT DISTINCT(STANDARD) FROM STUDENT
+
+/* GET THE NAMES OF THE CITIES THE STUDENT IN STANDARD 3B LIVE IN*/
+SELECT DISTINCT(ADDRESS) FROM STUDENT
+WHERE STANDARD=3 AND DIVISION='B';
+
+SELECT * FROM STUDENT
+WHERE STANDARD =3 AND DIVISION ='C'
+AND ADDRESS in
+(
+	SELECT DISTINCT(ADDRESS) FROM STUDENT
+	WHERE STANDARD=3 AND DIVISION='B'
+)
+
+
+/* WRITE THE DETAILS OF THOSE OWNERS WHO NOT BOUGHT ANY CAR*/
+
+SELECT OWNERS.NAME 
+FROM OWNERS LEFT JOIN CARS
+ON OWNERS.CID=CARS.CID
+WHERE CARS.MODEL IS NULL
+
+/* BY SUBQUERY*/
+SELECT * FROM OWNERS
+WHERE CID NOT IN
+(
+	SELECT DISTINCT(CID) FROM CARS
+    WHERE CID IS NOT NULL
+);
+
+
+/*WHICH STUDENTS IN STANDARD 4 HAVE MORE THTAN THE CLASS AVERAGE IN SCIENCE*/
+select * from student
+where STANDARD=4
+AND SCIENCE >
+(
+	SELECT AVG(SCIENCE) FROM STUDENT
+    WHERE STANDARD=4 
+);
+
+/*WRITE THE NAMES OF THOSE STUDENTS WHO HAS SCORED THE HIGHEST MARK IN SCHOOL IN MATHS*/
+SELECT * FROM STUDENT
+WHERE MATHS=
+(
+	SELECT max(MATHS) FROM STUDENT
+)
+
+/* WHICH DIVISIONS IN THE ENTIRE SCHOOL HAVE MORE STUDENT THAN STANDARD 3C*/
+SELECT STANDARD, DIVISION,COUNT(SNAME)
+FROM STUDENT
+GROUP BY STANDARD,DIVISION
+HAVING COUNT(SNAME) >
+(
+	SELECT COUNT(SNAME) FROM STUDENT
+	WHERE STANDARD=3 AND DIVISION='C'
+);
+
+/* amount spent by each customer
+select * from cars
+select * from owners
+
+select owners.Name,sum(cars.price)
+from owners inner join cars
+on owners.CID=cars.CID
+group by owners.Name
+having sum(cars.price) >
+(
+	select sum(cars.price)
+	from owners inner join cars
+	on owners.CID=cars.CID
+    where owners.Name='Amita'
+	group by owners.Name
+)
+
+
+
+
